@@ -8,6 +8,7 @@ using namespace std;
 struct NodeType;
 
 struct NodeType {
+    NodeType* previous;
     ClientType* info;
     NodeType* next;
 };
@@ -22,12 +23,13 @@ public:
   int  GetLength() const;
   void MakeEmpty();
   ClientType* GetItem(int key);
-  void PutItem(ClientType* item);
-  void PutItemUnsorted(ClientType* item);
+  void PutItemTop(ClientType* item);
+  void PutItemBottom(ClientType* item);
   void DeleteItem(int key);
   void ResetList();
   void UpdateItem(int key, double balance, string name);
   ClientType* GetNextItem();
+  void sortList();
   NodeType* getHead();
 
 private:
@@ -139,48 +141,85 @@ ClientType* DoubleType::GetItem(int key) {
  * 
  * @param item the account that is being added.
  */
-void DoubleType::PutItem(ClientType* item)
+void DoubleType::PutItemTop(ClientType* item)
 {
   NodeType* newNode;  // pointer to node being inserted
   NodeType* predLoc;  // trailing pointer
   NodeType* location; // traveling pointer
-  bool moreToSearch;
+  // bool moreToSearch;
 
   location = listData;
   predLoc = NULL;
-  moreToSearch = (location != NULL);
+  // moreToSearch = (location != NULL);
 
-  // Find insertion point.
-  while (moreToSearch)
-  {
-    switch( item->ComparedTo(location->info ) )
-    {
-      case GREATER:
-        predLoc = location;
-        location = location->next;
-        moreToSearch = (location != NULL);
-        break;
-      case LESS:
-        moreToSearch = false;
-        break;
-     }
-  }
   // Prepare node for insertion.
   newNode = new NodeType;
   newNode->info = item;
 
   // Insert node into list.
-  if (predLoc == NULL)         // Insert as first.
+  if (listData == NULL)         // Insert as first.
   {
-    newNode->next = listData;
+    newNode->next = NULL;
+    newNode->previous = NULL;
     listData = newNode;
   }
   else
   {
-     newNode->next = location;
-     predLoc->next = newNode;
+    newNode->next = listData;
+    newNode->previous = NULL;
+    listData = newNode;
+
   }
   length++;
+}
+
+void DoubleType::PutItemBottom(ClientType* item) {
+  NodeType* newNode;  // pointer to node being inserted  // trailing pointer
+  NodeType* location; // traveling pointer
+  // bool moreToSearch;
+
+  location = listData;
+  // moreToSearch = (location != NULL);
+  newNode = new NodeType;
+  newNode->info = item;
+
+  if (listData == NULL)         // Insert as first.
+  {
+    newNode->next = NULL;
+    newNode->previous = NULL;
+    listData = newNode;
+  } else {
+    while (location->next != NULL)
+    {
+      location = location->next;
+    }
+    location->next = newNode;
+    newNode->previous = location;
+    newNode->next = NULL;
+    
+  }
+  length++;
+}
+
+void DoubleType::sortList() {
+  NodeType* tempNode;
+  NodeType* indexNode;
+  ClientType* temp;
+
+  if (listData == NULL) {
+    return;
+  } else {
+    for (tempNode = listData; tempNode->next != NULL; tempNode = tempNode->next) {
+      for (indexNode = tempNode->next; indexNode != NULL; indexNode = indexNode->next) {
+        if (tempNode->info->getBalance() > indexNode->info->getBalance() ) {
+          temp = tempNode->info;
+          tempNode->info = indexNode->info;
+          indexNode->info = temp;
+        }
+      }
+    }
+
+  }
 }
 
 
