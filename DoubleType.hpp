@@ -120,24 +120,10 @@ ClientType* DoubleType::GetItem(int key) {
   return item;
 }
 
-// Set location to listData
-// Set predLoc to NULL
-// Set moreToSearch to (location != NULL)
-// while moreToSearch
-//     switch (item.ComparedTo(location->info))
-//         case GREATER   :       Set predLoc to location
-//                                Set location to location->next
-//                                Set moreToSearch to (location != NULL)
-//         case LESS      : Set moreToSearch to false
-// Set newNode to the address of a newly allocated node
-// Set newNode->info to item
-// Set newNode->next to location
-// Set predLoc->next to newNode
-// Increment length
+
 /**
- * @brief this method adds an item to the list sorted by its ID
- * the method will first compare to see where the node must be inserted, 
- * then will proceed to insert the node at that point and increment the total length of the list
+ * @brief this method adds an item to the list by placing it at the head of the list 
+ * and then making the node the new head of the list
  * 
  * @param item the account that is being added.
  */
@@ -173,6 +159,12 @@ void DoubleType::PutItemTop(ClientType* item)
   length++;
 }
 
+/**
+ * @brief this method inserts into the list by traveling through the list and then 
+ * appending the node to the tail of the list 
+ * 
+ * @param item the object being entered into the list
+ */
 void DoubleType::PutItemBottom(ClientType* item) {
   NodeType* newNode;  // pointer to node being inserted  // trailing pointer
   NodeType* location; // traveling pointer
