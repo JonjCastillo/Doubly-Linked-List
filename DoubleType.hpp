@@ -1,10 +1,11 @@
 #ifndef DOUBLETYPE_HPP
 #define DOUBLETYPE_HPP
 
+
+template <class T>
 #include "ClientType.hpp"
 #include <iostream>
 using namespace std;
-// Header file for Sorted List ADT.
 struct NodeType;
 
 struct NodeType {
@@ -26,16 +27,21 @@ public:
   void PutItemTop(ClientType* item);
   void PutItemBottom(ClientType* item);
   void DeleteItem(int key);
+  void DeleteItemTop();
+  void DeleteItemBottom();
   void ResetList();
   void UpdateItem(int key, double balance, string name);
   ClientType* GetNextItem();
   void sortList();
   NodeType* getHead();
+  NodeType* getTail();
 
 private:
-   NodeType* listData;
+   NodeType* listData; //head
    int length;
+   NodeType* listTail; //tail of the list
    NodeType* currentPos;
+
 
 
 };
@@ -78,17 +84,7 @@ void DoubleType::MakeEmpty() {
   length = 0;
 }
 
-// Set location to listData
-// Set found to false
-// Set moreToSearch to (location != NULL)
-// while moreToSearch AND NOT found
-//      switch (item.ComparedTo(location->info))
-//          case GREATER  :        Set location to location->next
-//                                 Set moreToSearch to (location != NULL)
-//          case EQUAL    :        Set found to true
-//                                 Set item to location->info
-//          case LESS     :        Set moreToSearch to false
-// return item
+
 /**
  * @brief this method returns the account found by its ID
  * it searches through the list until it finds the node.
@@ -148,6 +144,7 @@ void DoubleType::PutItemTop(ClientType* item)
     newNode->next = NULL;
     newNode->previous = NULL;
     listData = newNode;
+    listTail = newNode;
   }
   else
   {
@@ -180,14 +177,11 @@ void DoubleType::PutItemBottom(ClientType* item) {
     newNode->next = NULL;
     newNode->previous = NULL;
     listData = newNode;
+    listTail = newNode;
   } else {
-    while (location->next != NULL)
-    {
-      location = location->next;
-    }
-    location->next = newNode;
-    newNode->previous = location;
+    newNode->previous = listTail;
     newNode->next = NULL;
+    listTail = newNode;
     
   }
   length++;
@@ -215,16 +209,7 @@ void DoubleType::sortList() {
 }
 
 
-// Initialize location to position of first item
-// Set found to false
-// while NOT found
-//     switch (item.ComparedTo(Info(location)))
-//         case GREATER   :   Set location to Next(location)
-//         case LESS      :   // Cannot happen because list is sorted.
-//         case EQUAL     :   Set found to true
-// for index going from location + 1 TO length – 1
-//      Set Info(index – 1) to Info(index)
-// Decrement length
+
 /**
  * @brief this method finds the specified account by its ID
  * and then deletes it by removing the node and setting the pointer of the previous node 
@@ -253,6 +238,20 @@ void DoubleType::DeleteItem(int key)
   }
   delete tempLocation;
   length--;
+}
+
+void DoubleType::DeleteItemTop() {
+  NodeType* tempNode;
+  tempNode = listData;
+  listData = listData->next;
+  delete tempNode;
+}
+
+void DoubleType::DeleteItemBottom() {
+  NodeType* tempNode;
+  tempNode = listTail;
+  listTail = listTail->previous;
+  delete tempNode;
 }
 
 void DoubleType::ResetList()
@@ -323,6 +322,12 @@ void DoubleType::UpdateItem(int key, double balance, string name) {
 NodeType* DoubleType::getHead() {
   return listData;
 }
+
+NodeType* DoubleType::getTail() {
+  return listTail;
+}
+
+
 
 
 #endif
